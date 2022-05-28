@@ -1,7 +1,0 @@
-"ID"	"Cell State"
-"PD1_48_EDT"	"S01"
-"ipiPD1_19_EDT"	"S01"
-"ipiPD1_27_EDT"	"S01"
-"ipiPD1_33_EDT"	"S01"
-"PD1_17_EDT"	"S03"
-"PD1_41_EDT"	"S03"

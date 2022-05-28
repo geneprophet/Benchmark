@@ -1,3 +1,0 @@
-"ID"	"Cell State"
-"Pat_0522"	"S02"
-"Pat_9517"	"S06"
