@@ -16,6 +16,7 @@ library(pROC)
 library(survminer)
 library(survival)
 library(png)
+library(Cairo)
 
 HR_95CI <- function(x){ 
   x <- summary(x)
@@ -40,11 +41,11 @@ kk_single = function(dataset,gene,uuid){
     expMarker = expMarker[which(!is.na(expMarker$Resp_NoResp)),]
     g = ggboxplot(expMarker,x="Resp_NoResp",y="Marker",color = "Resp_NoResp",palette = "npg",add = "jitter") + 
       stat_compare_means(comparisons = my_comparisons,label = "p.signif",method.args = list(alternative = "two.sided"))
-    ggsave(plot = g,filename = paste0("tmp/Results_wilcox_test/",uuid,".png"),width = 6,height = 6, bg="white")
+    ggsave(plot = g,filename = paste0("tmp/Results_wilcox_test/",uuid,".png"),width = 6,height = 6, bg="white",type="cairo-png")
     res = wilcox.test(Marker ~ Resp_NoResp, data = expMarker,alternative = "two.sided")
     auc = roc(Resp_NoResp ~ Marker, data = expMarker,auc = T)
     g = ggroc(auc,color="#4D96FF",linetype = 1.2,size= 1) + theme_minimal() + annotate("text", x=0.9, y=0.97, label=paste0("AUC = ",round(auc$auc,digits = 2)),size=6, fontface="bold") + xlab("Specificity") + ylab("Sensitivity")
-    ggsave(plot = g,filename = paste0("tmp/Results_AUC/",uuid,".png"),width = 6,height = 6,bg = "white")
+    ggsave(plot = g,filename = paste0("tmp/Results_AUC/",uuid,".png"),width = 6,height = 6,bg = "white",type="cairo-png")
     result=c(res$p.value,as.numeric(auc$auc))
     names(result) = c("p_value","AUC")
     if(is.element("OS",colnames(data$Clinical))){
@@ -56,7 +57,7 @@ kk_single = function(dataset,gene,uuid){
       expMarker$OS_CNSR <- as.numeric(expMarker$OS_CNSR)
       expMarker$Class <- ifelse(expMarker$Marker > mean(expMarker$Marker),"High","Low")
       fit = survfit(Surv(OS,OS_CNSR) ~ Class,data=expMarker)
-      png(paste0("tmp/Results_os/",uuid,".png"),width = 600,height = 600, bg="white")
+      png(file=paste0("tmp/Results_os/",uuid,".png"),width = 600,height = 600, bg="white",type="cairo")
       plot = ggsurvplot(fit, data=expMarker,pval = TRUE,ggtheme = theme_minimal(),pval.method = TRUE,surv.median.line="hv",conf.int=T,risk.table=T)
       print(plot);dev.off()
       p = surv_pvalue(fit,data=expMarker)
@@ -64,7 +65,7 @@ kk_single = function(dataset,gene,uuid){
       hr = HR_95CI(res.cox)
       if(!is.element(Inf,hr) & !is.element(NA,hr)){ 
         plot = ggforest(res.cox,data = expMarker,refLabel = 1,fontsize = 1, cpositions = c(0.00,0.06,0.4))
-        ggsave(plot=plot,filename = paste0("tmp/Results_os_forest/",uuid,".png"),width = 12,height = 6, bg="white") 
+        ggsave(plot=plot,filename = paste0("tmp/Results_os_forest/",uuid,".png"),width = 12,height = 6, bg="white",type="cairo-png") 
       }
       OS_results = c(hr,p$pval)
       names(OS_results) = c(paste0("OS_",names(hr)),"OS_p_value")
@@ -79,7 +80,7 @@ kk_single = function(dataset,gene,uuid){
       expMarker$PFS_CNSR <- as.numeric(expMarker$PFS_CNSR)
       expMarker$Class <- ifelse(expMarker$Marker > mean(expMarker$Marker),"High","Low")
       fit = survfit(Surv(PFS,PFS_CNSR) ~ Class,data=expMarker)
-      png(paste0("tmp/Results_pfs/",uuid,".png"),width = 600,height = 600, bg="white")
+      png(file=paste0("tmp/Results_pfs/",uuid,".png"),width = 600,height = 600, bg="white",type="cairo")
       plot = ggsurvplot(fit, data=expMarker,pval = TRUE,ggtheme = theme_minimal(),pval.method = TRUE,surv.median.line="hv",conf.int=T,risk.table=T)
       print(plot);dev.off()
       p = surv_pvalue(fit,data=expMarker)
@@ -87,7 +88,7 @@ kk_single = function(dataset,gene,uuid){
       hr = HR_95CI(res.cox)
       if(!is.element(Inf,hr) & !is.element(NA,hr)){ 
         plot = ggforest(res.cox,data = expMarker,refLabel = 1,fontsize = 1, cpositions = c(0.00,0.06,0.4))
-        ggsave(plot=plot,filename = paste0("tmp/Results_pfs_forest/",uuid,".png"),width = 12,height = 6, bg="white") 
+        ggsave(plot=plot,filename = paste0("tmp/Results_pfs_forest/",uuid,".png"),width = 12,height = 6, bg="white",type="cairo-png") 
       }
       PFS_results = c(hr,p$pval)
       names(PFS_results) = c(paste0("PFS_",names(hr)),"PFS_p_value")
@@ -132,11 +133,11 @@ kk_set = function(dataset,geneset,uuid,type){
     expMarker = expMarker[which(!is.na(expMarker$Resp_NoResp)),]
     g = ggboxplot(expMarker,x="Resp_NoResp",y="Signature",color = "Resp_NoResp",palette = "npg",add = "jitter") + 
       stat_compare_means(comparisons = my_comparisons,label = "p.signif",method.args = list(alternative = "two.sided"))
-    ggsave(plot = g,filename = paste0("tmp/Results_wilcox_test/",uuid,".png"),width = 6,height = 6, bg="white")
+    ggsave(plot = g,filename = paste0("tmp/Results_wilcox_test/",uuid,".png"),width = 6,height = 6, bg="white",type="cairo-png")
     res = wilcox.test(Signature ~ Resp_NoResp, data = expMarker,alternative = "two.sided")
     auc = roc(Resp_NoResp ~ Signature, data = expMarker,auc = T)
     g = ggroc(auc,color="#4D96FF",linetype = 1.2,size= 1) + theme_minimal() + annotate("text", x=0.9, y=0.97, label=paste0("AUC = ",round(auc$auc,digits = 2)),size=6, fontface="bold") + xlab("Specificity") + ylab("Sensitivity")
-    ggsave(plot = g,filename = paste0("tmp/Results_AUC/",uuid,".png"),width = 6,height = 6,bg = "white")
+    ggsave(plot = g,filename = paste0("tmp/Results_AUC/",uuid,".png"),width = 6,height = 6,bg = "white",type="cairo-png")
     result=c(res$p.value,as.numeric(auc$auc))
     names(result) = c("p_value","AUC")
     
@@ -148,7 +149,7 @@ kk_set = function(dataset,geneset,uuid,type){
       expMarker$OS_CNSR <- as.numeric(expMarker$OS_CNSR)
       expMarker$Class <- ifelse(expMarker$Signature > mean(expMarker$Signature),"High","Low")
       fit = survfit(Surv(OS,OS_CNSR) ~ Class,data=expMarker)
-      png(paste0("tmp/Results_os/",uuid,".png"),width = 600,height = 600, bg="white")
+      png(file=paste0("tmp/Results_os/",uuid,".png"),width = 600,height = 600, bg="white",type="cairo")
       plot = ggsurvplot(fit, data=expMarker,pval = TRUE,ggtheme = theme_minimal(),pval.method = TRUE,surv.median.line="hv",conf.int=T,risk.table=T)
       print(plot);dev.off()
       p = surv_pvalue(fit,data=expMarker)
@@ -156,7 +157,7 @@ kk_set = function(dataset,geneset,uuid,type){
       hr = HR_95CI(res.cox)
       if(!is.element(Inf,hr) & !is.element(NA,hr)){ 
         plot = ggforest(res.cox,data = expMarker,refLabel = 1,fontsize = 1, cpositions = c(0.00,0.06,0.4))
-        ggsave(plot=plot,filename = paste0("tmp/Results_os_forest/",uuid,".png"),width = 12,height = 6, bg="white") 
+        ggsave(plot=plot,filename = paste0("tmp/Results_os_forest/",uuid,".png"),width = 12,height = 6, bg="white",type="cairo-png") 
       }
       OS_results = c(hr,p$pval)
       names(OS_results) = c(paste0("OS_",names(hr)),"OS_p_value")
@@ -170,7 +171,7 @@ kk_set = function(dataset,geneset,uuid,type){
       expMarker$PFS_CNSR <- as.numeric(expMarker$PFS_CNSR)
       expMarker$Class <- ifelse(expMarker$Signature > mean(expMarker$Signature),"High","Low")
       fit = survfit(Surv(PFS,PFS_CNSR) ~ Class,data=expMarker)
-      png(paste0("tmp/Results_pfs/",uuid,".png"),width = 600,height = 600, bg="white")
+      png(file=paste0("tmp/Results_pfs/",uuid,".png"),width = 600,height = 600, bg="white",type="cairo")
       plot = ggsurvplot(fit, data=expMarker,pval = TRUE,ggtheme = theme_minimal(),pval.method = TRUE,surv.median.line="hv",conf.int=T,risk.table=T)
       print(plot);dev.off()
       p = surv_pvalue(fit,data=expMarker)
@@ -178,7 +179,7 @@ kk_set = function(dataset,geneset,uuid,type){
       hr = HR_95CI(res.cox)
       if(!is.element(Inf,hr) & !is.element(NA,hr)){ 
         plot = ggforest(res.cox,data = expMarker,refLabel = 1,fontsize = 1, cpositions = c(0.00,0.06,0.4))
-        ggsave(plot=plot,filename = paste0("tmp/Results_pfs_forest/",uuid,".png"),width = 12,height = 6, bg="white") 
+        ggsave(plot=plot,filename = paste0("tmp/Results_pfs_forest/",uuid,".png"),width = 12,height = 6, bg="white",type="cairo-png") 
       }
       PFS_results = c(hr,p$pval)
       names(PFS_results) = c(paste0("PFS_",names(hr)),"PFS_p_value")
