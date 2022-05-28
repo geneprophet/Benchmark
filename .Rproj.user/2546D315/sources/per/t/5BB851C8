@@ -1,0 +1,27 @@
+{
+    "id": "5BB851C8",
+    "path": "D:/projects/R Projects/Benchmark/src/mysql.R",
+    "project_path": "src/mysql.R",
+    "type": "r_source",
+    "hash": "40151441",
+    "contents": "",
+    "dirty": false,
+    "created": 1650876373114.0,
+    "source_on_save": false,
+    "relative_order": 9,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "33,0",
+        "scrollLine": "0"
+    },
+    "folds": "36|33|56|0|\n57|1|143|0|\n155|1|205|0|\n276|1|440|0|\n279|44|296|2|\n",
+    "lastKnownWriteTime": 1651932272,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1651932296312,
+    "read_only": false,
+    "read_only_alternatives": []
+}

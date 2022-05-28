@@ -1,0 +1,18 @@
+# misc
+.DS_Store
+
+/CIBERSORTx_input
+/CIBERSORTx_output
+/datasets
+/figures
+/gencode.v22.annotation.gtf
+/ICB_data
+/marker
+/MFP_input
+/MFP_output
+/Results
+statistical.xlsx
+/TCGA
+/TIDE_input
+/TIDE_output
+/tmp
