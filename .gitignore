@@ -1,6 +1,7 @@
 # misc
 .DS_Store
 
+*.zip
 /CIBERSORTx_input
 /CIBERSORTx_output
 /datasets
@@ -10,11 +11,12 @@
 /marker
 /MFP_input
 /MFP_output
+/EcoTyper_output
 /Results
-statistical.xlsx
 /TCGA
 /TIDE_input
 /TIDE_output
 /tmp
 .Rproj.user
+/.Rproj.user
 .Rhistory

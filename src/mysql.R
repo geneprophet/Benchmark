@@ -1,7 +1,7 @@
 ##construct the mysql table and save to the server
 library(RMySQL)
 # mydb = dbConnect(MySQL(), user='kkk', password='kkk@123456', 
-#                  dbname='kanghe_db', host='192.168.164.82',port=33060)
+#                  dbname='icb', host='192.168.129.137',port=3306)
 mydb = dbConnect(MySQL(), user='root', password='kang123456', 
                  dbname='kanghe_db', host='127.0.0.1',port=3306)
 dbListTables(mydb)
@@ -164,8 +164,10 @@ load("Results/treatment_benchmark_results.Rdata")
 res4 = res
 
 res = rbind(res1,res2,res3,res4)
+
 ##统一biomarker和dataset的名字
 res$Biomarker = as.character(res$Biomarker)
+res$Biomarker[which(res$Biomarker=="EcoTyper")]="Ecotype"
 res$Dataset = as.character(res$Dataset)
 res$Dataset[which(res$Dataset=="ccRCC_124_Braun")] = "Braun_2020"
 res$Dataset[which(res$Dataset=="Melanoma_19_MGH_PRE")] = "MGH_PRE_2021"
@@ -279,11 +281,11 @@ dbWriteTable(mydb,"tcga",OS_results, overwrite = F, append= T,
   library(dplyr)
   construct_landscape = function(data,name){
     landscape = data$Landscape
-    landscape = landscape %>% dplyr::select(-c("MFP","Ecotype"))
+    landscape1 = landscape %>% dplyr::select(-c("MFP","Ecotype"))
     
-    a = apply(landscape[,-1], 2, scale)
+    a = apply(landscape1[,-1], 2, scale)
     b = as.data.frame(a)
-    b$sample = landscape$Sample
+    b$sample = landscape1$Sample
     
     tmp = gather(b,biomarker,value,PD_L1,PD_1,PD_L2,CX3CL1,CTLA4,CYT_score,HLA_DRA,IFN_gamma,Expanded_immune_gene_signature,
                  T_cell_inflamed_GEP_score,Immunophenoscore,IMPRES_score,CRMA_score,The_immune_resistance_program,EMT_Stroma_core_signature,
@@ -291,11 +293,19 @@ dbWriteTable(mydb,"tcga",OS_results, overwrite = F, append= T,
                  APM_score,IPRES_score,C_ECM_score,IMS_score,PASS_PRE,PASS_ON,MIAS_score,CD8T_xCell,CD8T_MCPcounter,CD8T_CIBERSORTx,
                  Immunoscore_CIBERSORTx,IFN_gamma_ssGSEA,Expanded_immune_gene_ssGSEA,T_cell_inflamed_GEP_ssGSEA,CRMA_ssGSEA,
                  EMT_Stroma_core_ssGSEA,F_TBRS_ssGSEA,RiskScore_ssGSEA,TLS_score_ssGSEA,Renal_101_Immuno_ssGSEA)
+    
     tmp$dataset = name
     colnames(tmp) = tolower(colnames(tmp))
-    return(tmp)
+    
+    landscape2 = landscape %>% dplyr::select(c("Sample","MFP","Ecotype"))
+    tmp2 = gather(landscape2,biomarker,value,MFP,Ecotype)
+    tmp2$dataset = name
+    colnames(tmp2) = tolower(colnames(tmp2))
+    
+    all_tmp = rbind(tmp,tmp2)
+    
+    return(all_tmp)
   }
-  
   
   load("./ICB_data/Braun et al/Braun_data.Rdata")
   data1=Braun_data; name1="Braun_2020"

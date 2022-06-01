@@ -55,7 +55,7 @@ benchmark_result = function(data,name){
                                           MFP(data,name),
                                           EcoTyper(data,name))
   rownames(deconvolution_benchmark_results)  = c("CD8T_CIBERSORTx","CD8T_MCPcounter","CD8T_xCell",
-                                                 "Immunoscore_CIBERSORTx","MFP","EcoTyper")
+                                                 "Immunoscore_CIBERSORTx","MFP","Ecotype")
   
   
   Dataset=rep(name,39)
